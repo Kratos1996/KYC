@@ -1,0 +1,50 @@
+****************************************************************
+### Build Commands - Execute in This Order
+****************************************************************
+
+****************************************************************
+### Option A: For Development with iOS App
+****************************************************************
+# 1. Clean everything
+./gradlew clean
+
+# 2. Install CocoaPods dependencies
+cd iosApp
+pod install --repo-update
+cd ..
+
+# 3. Build the KMP module
+./gradlew :TensorflowLiteRunner:build -Dorg.gradle.jvmargs="-Xmx4096m -XX:MaxMetaspaceSize=1024m" --no-daemon --max-workers=2
+
+# 4. Install the pod (this syncs your KMP module)
+./gradlew :TensorflowLiteRunner:podInstall
+
+# 5. Open and build iOS app
+cd iosApp
+open iosApp.xcworkspace  # NOT .xcodeproj - use workspace!
+
+****************************************************************
+
+****************************************************************
+### Option B: For Creating XCFramework
+****************************************************************
+# 1. Clean everything
+./gradlew clean
+
+# 2. Install pods first
+cd iosApp
+pod install --repo-update
+cd ..
+
+# 3. Generate Podspec
+./gradlew :TensorflowLiteRunner:podspec
+
+# 4. Install pods for KMP module
+./gradlew :TensorflowLiteRunner:podInstall
+
+# 5. Create XCFramework
+./gradlew :TensorflowLiteRunner:createXCFramework
+
+# XCFramework will be at: TensorflowLiteRunner/build/xcframework/TensorflowLiteRunner.xcframework
+
+****************************************************************
